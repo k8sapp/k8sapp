@@ -1,0 +1,30 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE html>
+
+<head>
+	<title> Social Auth </title>
+</head>
+
+<body> 
+	<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+		<h1 class="my-0 mr-md-auto font-weight-normal" style="font-family:verdana;font-size:40px">K8sApp</h1>
+		<nav class="my-2 my-md-0 mr-md-3">
+			<a class="p-2 text-dark" href="#">Support</a>
+  		</nav>
+  		<a class="btn btn-outline-primary" href="{% url 'login' %}">Login/Sign up</a>
+	</div>
+
+<!-- Top Image -->
+	<div class="container-fluid" id="topimagecontainer">
+    	<img src='{% static "socialauth/images/jezzinesunset.jpg" %}' alt="topimage" class="img-responsive">
+    
+	</div>    
+	<p> Welcome </p>
+	<!--{{user}}-->
+	<p> <button><a href="{% provider_login_url "google" %}">Google Login</a></button></p>
+	<p><button><a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Login</a></button></p>
+</body>
+
+</html>

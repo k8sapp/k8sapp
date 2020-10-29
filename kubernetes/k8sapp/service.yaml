@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sapp
+  labels:
+    name: k8sapp
+spec:
+  ports:
+  - port: 8020
+    targetPort: 8020
+  selector:
+    name: k8sapp
+  type: LoadBalancer

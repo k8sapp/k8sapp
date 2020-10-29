@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sapp-deployment
+  labels:
+    name: k8sapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      name: k8sapp
+  template:
+    metadata:
+      labels:
+        name: k8sapp
+    spec:
+      containers:
+        - name: k8sapp
+          imagePullPolicy: Always
+          image: us.icr.io/joekoz/k8sapp:latest
+          ports:
+            - containerPort: 8020
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+
+
