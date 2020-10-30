@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sapp-service
+spec:
+  ports:
+  - port: 8020
+    targetPort: 8020
+    protocol: TCP
+  type: ClusterIP
+  selector:
+    app: k8sapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sapp-deployment
+spec:
+  selector:
+    matchLabels:
+      app: k8sapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: k8sapp
+    spec:
+# Uncomment only if you are not deploying to the default namespace
+# In this case, make sure to create a Docker registry secret
+#      imagePullSecrets:
+#        - name: $IMAGE_PULL_SECRET
+      containers:
+      - name: k8sapp
+        image: $REGISTRY_URL/$REGISTRY_NAMESPACE/$IMAGE_NAME:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8020
+        envFrom:
+         - secretRef:
+            name: k8sapp-credentials
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-for-k8sapp
+  #annotations:
+    # protect the service with App ID
+    ##ingress.bluemix.net/appid-auth: "bindSecret=binding-kozhaya-appid namespace=default requestType=web serviceName=k8sapp-service"
+    # increase max upload size
+    ##ingress.bluemix.net/client-max-body-size: "50m"
+spec:
+  tls:
+  - hosts:
+    - k8sapp.$INGRESS_SUBDOMAIN
+    secretName: $INGRESS_SECRET
+# Uncomment below if you are using a custom domain
+#  - hosts:
+#    - secure-file-storage.<your custom domain>
+#    secretName: secure-file-storage-certificate
+  rules:
+  - host: k8sapp.$INGRESS_SUBDOMAIN
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: k8sapp-service
+          servicePort: 8020
+# Uncomment below if you are using a custom domain
+#  - host: secure-file-storage.<your custom domain>
+#    http:
+#      paths:
+#      - path: /
+#        backend:
+#          serviceName: k8sapp-service
+#          servicePort: 8020
